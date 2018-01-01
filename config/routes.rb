@@ -1,5 +1,14 @@
 Rails.application.routes.draw do
   
+  devise_for :users,:controllers => {
+   :registrations => 'users/registrations',
+   :sessions => 'users/sessions',
+   :passwords =>'users/passwords'
+  }
+  get 'home/index'
+
+  get 'home/authentication'
+
  resources :projects do
     resources :tasks, only: [:create, :destroy]
   end
@@ -7,6 +16,10 @@ Rails.application.routes.draw do
   post '/projects/:project_id/tasks/:id/toggle' => 'tasks#toggle'
   
   root 'projects#index'
+  
+  if Rails.env.development? #開発環境の場合
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
